@@ -42,7 +42,7 @@ public class ReaderDAOTest {
         readerListAll = (List<Reader>) readerDAO.getAll();
         assertEquals(5, readerListAll.size());
 
-        List<Borrowing> borrowingList = readerDAO.getAllBorrowingByName(readerListAll.get(0).getFullName());
+        List<Borrowing> borrowingList = readerDAO.getAllBorrowingByReaderFullName(readerListAll.get(0).getFullName());
         assertEquals(1, borrowingList.size());
     }
 }
