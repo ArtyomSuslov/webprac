@@ -24,5 +24,5 @@ public class BookCopy implements CommonEntity<Long> {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private BookStatus status = BookStatus.AVAILABLE;
+    private BookStatus status = BookStatus.available;
 }

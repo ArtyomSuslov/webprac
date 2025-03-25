@@ -2,6 +2,7 @@ package ru.msu.cmc.webprac.entities;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,6 +30,14 @@ public class Book implements CommonEntity<Long> {
 
     @Column(name = "isbn", length = 13, nullable = false, unique = true)
     private String isbn;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<BookCopy> bookCopyList;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<BookAuthor> bookAuthorList;
 
     @Override
     public boolean equals(Object o) {
