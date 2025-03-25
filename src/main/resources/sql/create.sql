@@ -56,6 +56,8 @@ CREATE TABLE book_copy (
 	FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE CASCADE
 );
 
+ALTER TABLE book_copy ALTER COLUMN status TYPE varchar USING status::text;
+
 -- Таблица для хранения информации о истории выдачи книг читателям
 DROP TABLE IF EXISTS borrowing CASCADE;
 CREATE TABLE borrowing (
