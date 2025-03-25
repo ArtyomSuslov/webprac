@@ -57,7 +57,7 @@ public class ReaderDAOImpl extends CommonDAOImpl<Reader, Long> implements Reader
     }
 
     @Override
-    public List<Borrowing> getAllBorrowingByName(String fullName) {
+    public List<Borrowing> getAllBorrowingByReaderFullName(String fullName) {
         try (Session session = sessionFactory.openSession()) {
             Query<Borrowing> query = session.createQuery("SELECT b FROM Borrowing b " +
                             "JOIN b.reader r " +

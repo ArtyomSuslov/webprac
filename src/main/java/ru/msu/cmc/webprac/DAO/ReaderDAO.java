@@ -20,5 +20,5 @@ public interface ReaderDAO extends CommonDAO<Reader, Long> {
     Reader getSingleReaderByPhone(String phoneNumber);
 
     // Getting all the books reader has taken
-    List<Borrowing> getAllBorrowingByName(String fullName);
+    List<Borrowing> getAllBorrowingByReaderFullName(String fullName);
 }
