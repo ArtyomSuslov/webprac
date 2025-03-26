@@ -1,18 +1,19 @@
 package ru.msu.cmc.webprac.DAO;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import ru.msu.cmc.webprac.entities.Author;
-import ru.msu.cmc.webprac.entities.Book;
-import ru.msu.cmc.webprac.entities.BookStatus;
+import ru.msu.cmc.webprac.entities.*;
 
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -25,27 +26,96 @@ public class BookDAOTest {
     private SessionFactory sessionFactory;
 
     @Test
-    void testSimpleManipulations() {
-        List<Book> bookListAll = (List<Book>)bookDAO.getAll();
-        assertEquals(7, bookListAll.size());
+    void getSingleBookByTitleTest() {
+        Book book;
 
-        List<Author> authorList = bookDAO.getAllAuthorByBookId(bookDAO.getSingleBookByTitle("Двенадцать стульев").getId());
-        assertEquals(2, authorList.size());
+        book = bookDAO.getSingleBookByTitle("Анна Каренина");
+        assertNotNull(book);
+
+        book = bookDAO.getSingleBookByTitle("testtesttest");
+        assertNull(book);
     }
 
     @Test
-    void testFilter() {
+    void getAllBookFromYearTest() {
+        List<Book> bookList;
+
+        bookList = bookDAO.getAllBookFromYear(1877L);
+        assertEquals(1, bookList.size());
+
+        bookList = bookDAO.getAllBookFromYear(0L);
+        assertEquals(0, bookList.size());
+    }
+
+    @Test
+    void getSingleBookByIsbnTest() {
+        Book book;
+
+        book = bookDAO.getSingleBookByIsbn("9781234567897");
+        assertNotNull(book);
+
+        book = bookDAO.getSingleBookByIsbn("0000000000000");
+        assertNull(book);
+    }
+
+    @Test
+    void getAllAuthorByBookIdTest() {
+        List<Author> authorList;
+
+        authorList = bookDAO.getAllAuthorByBookId(6L);
+        assertEquals(2, authorList.size());
+
+        authorList = bookDAO.getAllAuthorByBookId(0L);
+        assertEquals(0, authorList.size());
+    }
+
+    @Test
+    void getAllAvailableBookCopyByBookIdTest() {
+        List<BookCopy> bookCopyList;
+
+        bookCopyList = bookDAO.getAllAvailableBookCopyByBookId(1L);
+        assertEquals(1, bookCopyList.size());
+
+        bookCopyList = bookDAO.getAllAvailableBookCopyByBookId(3L);
+        assertEquals(0, bookCopyList.size());
+    }
+
+    @Test
+    void getAllBookByFilterTest() {
         BookDAO.Filter filter;
-        List<Book> bookListFilter;
+        List<Book> bookList;
 
-        // Getting all the books from author with id=1
-        filter = BookDAO.Filter.builder().authorId(1L).build();
-        bookListFilter = bookDAO.getAllBookByFilter(filter);
-        assertEquals(1, bookListFilter.size());
+        filter = BookDAO.Filter.builder()
+                .authorId(1L)
+                .publisher("Издательство 1")
+                .year(1877L)
+                .status(BookStatus.available)
+                .build();
+        bookList = bookDAO.getAllBookByFilter(filter);
+        assertEquals(1, bookList.size());
 
-        // Getting all the books with available copies
-        filter = BookDAO.Filter.builder().status(BookStatus.available).build();
-        bookListFilter = bookDAO.getAllBookByFilter(filter);
-        assertEquals(5, bookListFilter.size());
+        filter = BookDAO.Filter.builder()
+                .authorId(1L)
+                .build();
+        bookList = bookDAO.getAllBookByFilter(filter);
+        assertEquals(1, bookList.size());
+
+        filter = BookDAO.Filter.builder()
+                .publisher("Издательство 1")
+                .build();
+        bookList = bookDAO.getAllBookByFilter(filter);
+        assertEquals(1, bookList.size());
+
+        filter = BookDAO.Filter.builder()
+                .year(1877L)
+                .build();
+        bookList = bookDAO.getAllBookByFilter(filter);
+        assertEquals(1, bookList.size());
+
+        filter = BookDAO.Filter.builder()
+                .status(BookStatus.available)
+                .build();
+        bookList = bookDAO.getAllBookByFilter(filter);
+        assertEquals(5, bookList.size());
     }
 }

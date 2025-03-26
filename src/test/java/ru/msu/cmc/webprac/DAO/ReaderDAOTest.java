@@ -1,6 +1,5 @@
 package ru.msu.cmc.webprac.DAO;
 
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,8 +9,7 @@ import ru.msu.cmc.webprac.entities.Reader;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -20,29 +18,59 @@ public class ReaderDAOTest {
 
     @Autowired
     private ReaderDAO readerDAO;
-    @Autowired
-    private SessionFactory sessionFactory;
 
     @Test
-    void testSimpleManipulations() {
-        List<Reader> readerListAll = (List<Reader>) readerDAO.getAll();
-        assertEquals(5, readerListAll.size());
+    void getAllReaderByNameTest() {
+        List<Reader> readerList;
 
-        readerDAO.save(new Reader(
-                "Тестовый субъект",
-                "123123123",
-                "test@test.test",
-                "+7(999)999-99")
-        );
+        readerList = readerDAO.getAllReaderByName("Иван Иванов");
+        assertEquals(1, readerList.size());
 
-        readerListAll = readerDAO.getAllReaderByName("Тестовый субъект");
-        assertEquals("Тестовый субъект", readerListAll.get(0).getFullName());
+        readerList = readerDAO.getAllReaderByName("testtesttest");
+        assertEquals(0, readerList.size());
+    }
 
-        readerDAO.deleteById(readerListAll.get(0).getId());
-        readerListAll = (List<Reader>) readerDAO.getAll();
-        assertEquals(5, readerListAll.size());
+    @Test
+    void getSingleReaderByLibraryCardNumTest() {
+        Reader reader;
 
-        List<Borrowing> borrowingList = readerDAO.getAllBorrowingByReaderFullName(readerListAll.get(0).getFullName());
+        reader = readerDAO.getSingleReaderByLibraryCardNum("L12345");
+        assertNotNull(reader);
+
+        reader = readerDAO.getSingleReaderByLibraryCardNum("testtesttest");
+        assertNull(reader);
+    }
+
+    @Test
+    void getSingleReaderByAddressTest() {
+        Reader reader;
+
+        reader = readerDAO.getSingleReaderByAddress("ivan_ivanov@example.com");
+        assertNotNull(reader);
+
+        reader = readerDAO.getSingleReaderByAddress("testtesttest");
+        assertNull(reader);
+    }
+
+    @Test
+    void getSingleReaderByPhone() {
+        Reader reader;
+
+        reader = readerDAO.getSingleReaderByPhone("89031234567");
+        assertNotNull(reader);
+
+        reader = readerDAO.getSingleReaderByPhone("testtesttest");
+        assertNull(reader);
+    }
+
+    @Test
+    void getAllBorrowingByReaderFullName() {
+        List<Borrowing> borrowingList;
+
+        borrowingList = readerDAO.getAllBorrowingByReaderFullName("Иван Иванов");
         assertEquals(1, borrowingList.size());
+
+        borrowingList = readerDAO.getAllBorrowingByReaderFullName("testtesttest");
+        assertEquals(0, borrowingList.size());
     }
 }
