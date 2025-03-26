@@ -49,5 +49,16 @@ public class BorrowingDAOTest {
 
         borrowingList = borrowingDAO.getAllBorrowingWithoutReturnDate();
         assertEquals(3, borrowingList.size());
+
+        for (Borrowing borrowing : borrowingList) {
+            borrowingDAO.delete(borrowing);
+        }
+
+        List<Borrowing> borrowingListTest;
+
+        borrowingListTest = borrowingDAO.getAllBorrowingWithoutReturnDate();
+        assertEquals(0, borrowingListTest.size());
+
+        borrowingDAO.saveCollection(borrowingList);
     }
 }

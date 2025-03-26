@@ -64,6 +64,24 @@ public class CommonDAOTest {
         bookDAO.delete(book);
         book = bookDAO.getSingleBookByTitle("save_title");
         assertNull(book);
+
+        book = new Book(
+                null,
+                "save_title",
+                "test_publisher",
+                2025L,
+                "1111111111111",
+                null,
+                null);
+
+        bookDAO.save(book);
+
+        book = bookDAO.getSingleBookByTitle("save_title");
+        assertNotNull(book);
+
+        bookDAO.delete(book);
+        book = bookDAO.getSingleBookByTitle("save_title");
+        assertNull(book);
     }
 
     @Test
