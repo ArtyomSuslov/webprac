@@ -7,6 +7,7 @@ import ru.msu.cmc.webprac.DAO.ReaderDAO;
 import ru.msu.cmc.webprac.entities.Borrowing;
 import ru.msu.cmc.webprac.entities.Reader;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -22,7 +23,7 @@ public class ReaderDAOImpl extends CommonDAOImpl<Reader, Long> implements Reader
             Query<Reader> query = session
                     .createQuery("FROM Reader WHERE fullName LIKE :gotName", Reader.class)
                     .setParameter("gotName", likeExpr(fullName));
-            return !query.getResultList().isEmpty() ? query.getResultList() : null;
+            return !query.getResultList().isEmpty() ? query.getResultList() : Collections.emptyList();
         }
     }
 
@@ -63,7 +64,7 @@ public class ReaderDAOImpl extends CommonDAOImpl<Reader, Long> implements Reader
                             "JOIN b.reader r " +
                             "WHERE r.fullName LIKE :gotFullName", Borrowing.class)
                     .setParameter("gotFullName", likeExpr(fullName));
-            return !query.getResultList().isEmpty() ? query.getResultList() : null;
+            return !query.getResultList().isEmpty() ? query.getResultList() : Collections.emptyList();
         }
     }
 

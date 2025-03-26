@@ -7,6 +7,7 @@ import ru.msu.cmc.webprac.DAO.BookCopyDAO;
 import ru.msu.cmc.webprac.entities.BookCopy;
 import ru.msu.cmc.webprac.entities.BookStatus;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -22,7 +23,7 @@ public class BookCopyDAOImpl extends CommonDAOImpl<BookCopy, Long> implements Bo
             Query<BookCopy> query = session
                     .createQuery("FROM BookCopy WHERE book.id = :gotBookId", BookCopy.class)
                     .setParameter("gotBookId", bookId);
-            return !query.getResultList().isEmpty() ? query.getResultList() : null;
+            return !query.getResultList().isEmpty() ? query.getResultList() : Collections.emptyList();
         }
     }
 
@@ -32,7 +33,7 @@ public class BookCopyDAOImpl extends CommonDAOImpl<BookCopy, Long> implements Bo
             Query<BookCopy> query = session
                     .createQuery("FROM BookCopy WHERE status = :gotStatus", BookCopy.class)
                     .setParameter("gotStatus", status);
-            return !query.getResultList().isEmpty() ? query.getResultList() : null;
+            return !query.getResultList().isEmpty() ? query.getResultList() : Collections.emptyList();
         }
     }
 }

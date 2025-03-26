@@ -7,6 +7,7 @@ import ru.msu.cmc.webprac.DAO.AuthorDAO;
 import ru.msu.cmc.webprac.entities.Author;
 import ru.msu.cmc.webprac.entities.Book;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -22,7 +23,7 @@ public class AuthorDAOImpl extends CommonDAOImpl<Author, Long> implements Author
             Query<Author> query = session
                     .createQuery("FROM Author WHERE fullName LIKE :gotName", Author.class)
                     .setParameter("gotName", likeExpr(fullName));
-            return !query.getResultList().isEmpty() ? query.getResultList() : null;
+            return !query.getResultList().isEmpty() ? query.getResultList() : Collections.emptyList();
         }
     }
 
@@ -30,10 +31,10 @@ public class AuthorDAOImpl extends CommonDAOImpl<Author, Long> implements Author
     public List<Book> getAllBookByAuthorId(Long authorId) {
         try (Session session = sessionFactory.openSession()) {
             Query<Book> query = session
-                    .createQuery("SELECT ba.book.id FROM BookAuthor ba " +
+                    .createQuery("SELECT ba.book FROM BookAuthor ba " +
                             "WHERE ba.author.id = :gotAuthorId", Book.class)
                     .setParameter("gotAuthorId", authorId);
-            return !query.getResultList().isEmpty() ? query.getResultList() : null;
+            return !query.getResultList().isEmpty() ? query.getResultList() : Collections.emptyList();
         }
     }
 
