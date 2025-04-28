@@ -1,6 +1,9 @@
 package ru.msu.cmc.webprac.entities;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +34,13 @@ public class Book implements CommonEntity<Long> {
     @Column(name = "isbn", length = 13, nullable = false, unique = true)
     private String isbn;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @ToString.Exclude
     private List<BookCopy> bookCopyList;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @ToString.Exclude
     private List<BookAuthor> bookAuthorList;
 

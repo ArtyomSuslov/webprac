@@ -17,7 +17,7 @@ public class BookCopy implements CommonEntity<Long> {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id", nullable = false)
     @ToString.Exclude
     private Book book;

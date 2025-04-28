@@ -2,6 +2,7 @@ package ru.msu.cmc.webprac.entities;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
