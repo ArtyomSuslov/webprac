@@ -1,0 +1,137 @@
+<!-- templates/readers/form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common :: head}"></th:block>
+<body>
+<nav th:replace="~{common :: nav}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Регистрация нового читателя</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/readers}" th:object="${reader}" method="post">
+
+                        <!-- ФИО -->
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">ФИО *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="fullName"
+                                   th:field="*{fullName}"
+                                   required
+                                   pattern="^[А-ЯЁа-яё\s-]+$"
+                                   title="Используйте только русские буквы, дефис и пробелы">
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('fullName')}"
+                                 th:errors="*{fullName}">
+                                Ошибка в ФИО
+                            </div>
+                        </div>
+
+                        <!-- Номер читательского билета -->
+                        <div class="mb-3">
+                            <label for="libraryCardNum" class="form-label">
+                                Номер читательского билета *
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="libraryCardNum"
+                                   th:field="*{libraryCardNum}"
+                                   required
+                                   pattern="^\d{6}$"
+                                   title="Номер должен состоять из 6 цифр">
+                            <small class="form-text text-muted">
+                                Введите 6 цифр номера читательского билета
+                            </small>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('libraryCardNum')}"
+                                 th:errors="*{libraryCardNum}">
+                                Ошибка в номере билета
+                            </div>
+                        </div>
+
+                        <!-- Адрес -->
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Адрес</label>
+                            <textarea class="form-control"
+                                      id="address"
+                                      th:field="*{address}"
+                                      rows="2"></textarea>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('address')}"
+                                 th:errors="*{address}">
+                                Ошибка в адресе
+                            </div>
+                        </div>
+
+                        <!-- Телефон -->
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Телефон</label>
+                            <input type="tel"
+                                   class="form-control"
+                                   id="phoneNumber"
+                                   th:field="*{phoneNumber}"
+                                   pattern="^\+7\d{10}$"
+                                   placeholder="+71234567890"
+                                   title="Формат: +7 и 10 цифр номера">
+                            <small class="form-text text-muted">
+                                Формат: +7 и 10 цифр номера
+                            </small>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('phoneNumber')}"
+                                 th:errors="*{phoneNumber}">
+                                Ошибка в номере телефона
+                            </div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/readers" class="btn btn-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-primary">
+                                Зарегистрировать читателя
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{common :: scripts}"></div>
+
+<!-- Дополнительный JavaScript для валидации -->
+<script>
+    // Валидация формы
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!this.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+
+    // Форматирование телефона
+    document.getElementById('phoneNumber').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 0) {
+            if (!value.startsWith('7')) {
+                value = '7' + value;
+            }
+            value = '+' + value;
+        }
+        e.target.value = value.slice(0, 12);
+    });
+
+    // Форматирование номера читательского билета
+    document.getElementById('libraryCardNum').addEventListener('input', function(e) {
+        const value = e.target.value.replace(/\D/g, '');
+        e.target.value = value.slice(0, 6);
+    });
+</script>
+</body>
+</html>

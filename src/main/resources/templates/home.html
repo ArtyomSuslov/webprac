@@ -1,0 +1,47 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common :: head}"></th:block>
+<body>
+<nav th:replace="~{common :: nav}"></nav>
+
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-4" th:text="${pageTitle}">Библиотечная система</h1>
+        <p class="lead" th:text="${description}">Добро пожаловать в библиотечную систему учёта</p>
+        <hr class="my-4">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Книги</h5>
+                        <p class="card-text">Управление книжным фондом библиотеки</p>
+                        <a href="/books" class="btn btn-primary">Перейти к книгам</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Читатели</h5>
+                        <p class="card-text">Управление читателями библиотеки</p>
+                        <a href="/readers" class="btn btn-primary">Перейти к читателям</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Отчеты</h5>
+                        <p class="card-text">Просмотр отчетов о работе библиотеки</p>
+                        <a href="/borrowings/reports" class="btn btn-primary">Перейти к отчетам</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{common :: scripts}"></div>
+</body>
+</html>

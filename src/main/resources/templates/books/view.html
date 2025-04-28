@@ -1,0 +1,154 @@
+<!-- templates/books/view.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common :: head}"></th:block>
+<body>
+<nav th:replace="~{common :: nav}"></nav>
+
+<div class="container">
+    <div class="row">
+
+        <!-- Основная информация о книге -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" th:text="${book.title}">Название книги</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Авторы:</strong>
+                                <span>
+                                    <th:block th:each="author, iterStat : ${authors}">
+                                        <span th:text="${author.fullName}"></span><span th:if="${!iterStat.last}">, </span>
+                                    </th:block>
+                                </span>
+                            </p>
+                            <p><strong>Издательство:</strong>
+                                <span th:text="${book.publisher}">Издательство</span>
+                            </p>
+                            <p><strong>Год издания:</strong>
+                                <span th:text="${book.year}">Год</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>ISBN:</strong>
+                                <span th:text="${book.isbn}">ISBN</span>
+                            </p>
+                            <p><strong>Доступно экземпляров:</strong>
+                                <span>
+                                    <span th:text="${#lists.size(book.bookCopyList.?[status == T(ru.msu.cmc.webprac.entities.BookStatus).available])}">0</span> из
+                                    <span th:text="${#lists.size(book.bookCopyList)}">0</span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список экземпляров -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Экземпляры книги</h4>
+                    <form th:action="@{/books/{id}/copies(id=${book.id})}" method="post"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-success">
+                            Добавить экземпляр
+                        </button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="copy : ${allCopies}">
+                            <td th:text="${copy.id}">ID</td>
+                            <td>
+                                <span th:text="${copy.status == T(ru.msu.cmc.webprac.entities.BookStatus).available ? 'Доступен' : 'Взят'}"
+                                      th:class="${copy.status == T(ru.msu.cmc.webprac.entities.BookStatus).available ? 'text-success' : 'text-danger'}">
+                                    Статус
+                                </span>
+                            </td>
+                            <td>
+                                <form th:if="${copy.status == T(ru.msu.cmc.webprac.entities.BookStatus).available}"
+                                      th:action="@{/books/copies/{copyId}(copyId=${copy.id})}"
+                                      method="post"
+                                      style="display: inline;">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Вы уверены, что хотите удалить этот экземпляр?')">
+                                        Удалить
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- История выдачи -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">История выдачи</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID копии</th>
+                            <th>Читательский билет</th>
+                            <th>Дата выдачи</th>
+                            <th>Дата возврата</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="borrowing : ${borrowingList}">
+                                <td th:text="${borrowing.bookCopy.id}">ID копии</td>
+                                <td th:text="${borrowing.reader.libraryCardNum}">Номер билета</td>
+                                <td th:text="${#temporals.format(borrowing.borrowDate, 'dd.MM.yyyy')}">Дата выдачи</td>
+                                <td th:text="${borrowing.returnDate != null ?
+                          #temporals.format(borrowing.returnDate, 'dd.MM.yyyy') : '-'}">Дата возврата
+                                </td>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка удаления книги -->
+        <div class="col-12 mt-4">
+            <form th:action="@{/books/{id}(id=${book.id})}"
+                  method="post"
+                  class="text-center"
+                  onsubmit="return confirm('Вы уверены, что хотите удалить эту книгу?')">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" class="btn btn-danger"
+                        th:disabled="${not #lists.isEmpty(allCopies.?[status != T(ru.msu.cmc.webprac.entities.BookStatus).available])}">
+                    Удалить книгу
+                </button>
+            </form>
+            <p class="text-danger text-center mt-2"
+               th:if="${not #lists.isEmpty(allCopies.?[status != T(ru.msu.cmc.webprac.entities.BookStatus).available])}">
+                Книгу нельзя удалить, пока все экземпляры не будут возвращены
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="~{common :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!-- templates/borrowings/reports.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common :: head}"></th:block>
+<body>
+<nav th:replace="~{common :: nav}"></nav>
+
+<div class="container">
+    <h2>Отчеты по выдачам</h2>
+
+    <!-- Фильтр -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" th:action="@{/borrowings/reports}">
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+                        <label for="reportType" class="form-label">Тип отчета</label>
+                        <select class="form-select" id="reportType" name="reportType">
+                            <option value="ALL" th:selected="${reportType == 'ALL'}">Все выдачи</option>
+                            <option value="NOT_RETURNED" th:selected="${reportType == 'NOT_RETURNED'}">Не возвращенные</option>
+                            <option value="OVERDUE" th:selected="${reportType == 'OVERDUE'}">Просроченные</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="startDate" class="form-label">Дата начала</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control"
+                               th:value="${startDate}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="endDate" class="form-label">Дата окончания</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control"
+                               th:value="${endDate}">
+                    </div>
+
+                    <div class="col-md-3 align-self-end">
+                        <button type="submit" class="btn btn-primary w-100">Показать</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Таблица -->
+    <div class="card" th:if="${reportEntries != null}">
+        <div class="card-body table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Книга</th>
+                    <th>Читатель</th>
+                    <th>Дата выдачи</th>
+                    <th>Дата возврата</th>
+                    <th>Дней на руках</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${reportEntries}"
+                    th:classappend="${entry.overdue} ? 'table-danger'">
+                    <td th:text="${entry.borrowing.bookCopy.book.title}">Книга</td>
+                    <td th:text="${entry.borrowing.reader.fullName}">Читатель</td>
+                    <td th:text="${entry.borrowDateFormatted}">Выдача</td>
+                    <td th:text="${entry.returnDateFormatted}">Возврат</td>
+                    <td th:text="${entry.daysHeld}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{common :: scripts}"></div>
+
+</body>
+</html>

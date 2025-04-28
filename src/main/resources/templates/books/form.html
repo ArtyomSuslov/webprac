@@ -1,0 +1,141 @@
+<!-- templates/books/form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{common :: head}"></th:block>
+<body>
+<nav th:replace="~{common :: nav}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Добавление новой книги</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/books}" th:object="${book}" method="post">
+
+                        <!-- Название книги -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Название книги *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="title"
+                                   th:field="*{title}"
+                                   required>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('title')}"
+                                 th:errors="*{title}">
+                                Ошибка названия
+                            </div>
+                        </div>
+
+                        <!-- Авторы -->
+                        <div class="mb-3">
+                            <label for="authors" class="form-label">Авторы (через запятую) *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="authors"
+                                   name="authorNames"
+                                   required
+                                   placeholder="Иванов И.И., Петров П.П.">
+                            <small class="form-text text-muted">
+                                Введите авторов через запятую
+                            </small>
+                        </div>
+
+                        <!-- Издательство -->
+                        <div class="mb-3">
+                            <label for="publisher" class="form-label">Издательство</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="publisher"
+                                   th:field="*{publisher}">
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('publisher')}"
+                                 th:errors="*{publisher}">
+                                Ошибка издательства
+                            </div>
+                        </div>
+
+                        <!-- Год издания -->
+                        <div class="mb-3">
+                            <label for="year" class="form-label">Год издания *</label>
+                            <input type="number"
+                                   class="form-control"
+                                   id="year"
+                                   th:field="*{year}"
+                                   min="1"
+                                   required>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('year')}"
+                                 th:errors="*{year}">
+                                Ошибка года издания
+                            </div>
+                        </div>
+
+                        <!-- ISBN -->
+                        <div class="mb-3">
+                            <label for="isbn" class="form-label">ISBN *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="isbn"
+                                   th:field="*{isbn}"
+                                   pattern="\d{13}"
+                                   required>
+                            <small class="form-text text-muted">
+                                ISBN должен содержать 13 цифр
+                            </small>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('isbn')}"
+                                 th:errors="*{isbn}">
+                                Ошибка ISBN
+                            </div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/books" class="btn btn-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-primary">Добавить книгу</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{common :: scripts}"></div>
+
+<!-- Дополнительный JavaScript для валидации формы -->
+<script>
+    // Валидация формы перед отправкой
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!this.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+
+    // Валидация ISBN
+    document.getElementById('isbn').addEventListener('input', function(e) {
+        const isbn = e.target.value.replace(/\D/g, '');
+        if (isbn.length > 13) {
+            e.target.value = isbn.slice(0, 13);
+        } else {
+            e.target.value = isbn;
+        }
+    });
+
+    // Валидация года издания
+    document.getElementById('year').addEventListener('input', function(e) {
+        const currentYear = new Date().getFullYear();
+        const year = parseInt(e.target.value);
+        if (year > currentYear) {
+            e.target.value = currentYear;
+        }
+    });
+</script>
+</body>
+</html>

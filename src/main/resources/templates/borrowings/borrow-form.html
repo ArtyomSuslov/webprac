@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{common :: head}"></head>
+<body>
+<nav th:replace="~{common :: nav}"></nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Выдача книги</h3>
+                </div>
+                <div class="card-body">
+
+                    <!-- Уведомление об успешной выдаче книги -->
+                    <div th:if="${message}" class="alert alert-success">
+                        <p th:text="${message}"></p>
+                    </div>
+
+                    <form th:action="@{/borrowings/borrow}" method="post">
+
+                        <!-- Выбор читателя -->
+                        <div class="mb-3">
+                            <label for="readerCardNum" class="form-label">Номер читательского билета *</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="readerCardNum"
+                                   name="libraryCardNum"
+                                   th:value="${param.libraryCardNum}"
+                                   required
+                                   pattern="^\d{6}$"
+                                   oninput="validateForm()">
+                        </div>
+
+                        <!-- Выбор экземпляра книги -->
+                        <div class="mb-3">
+                            <label for="copyId" class="form-label">Выбор книги и экземпляра *</label>
+                            <select class="form-control" id="copyId" name="copyId" required>
+                                <option th:each="copy : ${bookCopies}"
+                                        th:value="${copy.id}"
+                                        th:text="${copy.book.title}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Дата выдачи -->
+                        <div class="mb-3">
+                            <label for="borrowDate" class="form-label">Дата выдачи *</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="borrowDate"
+                                   name="borrowDate"
+                                   th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                                   required>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/borrowings" class="btn btn-secondary">Отмена</a>
+                            <button type="submit"
+                                    class="btn btn-primary"
+                                    id="submitButton"
+                                    disabled>Выдать книгу</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{common :: scripts}"></div>
+
+<script>
+    function validateForm() {
+        const readerCardInput = document.getElementById('readerCardNum');
+        const copyIdInput = document.getElementById('copyId');
+        const borrowDateInput = document.getElementById('borrowDate');
+        const submitButton = document.getElementById('submitButton');
+
+        const isReaderValid = readerCardInput.value.length === 6;
+        const isBookValid = copyIdInput.value !== "";
+        const isDateValid = borrowDateInput.value !== "";
+
+        submitButton.disabled = !(isReaderValid && isBookValid && isDateValid);
+    }
+</script>
+</body>
+</html>
