@@ -52,8 +52,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Экземпляры книги</h4>
-                    <form th:action="@{/books/{id}/copies(id=${book.id})}" method="post"
-                          style="display: inline;">
+                    <form th:action="@{/books/{id}/copies(id=${book.id})}" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-success">
                             Добавить экземпляр
                         </button>
@@ -69,6 +68,9 @@
                         </tr>
                         </thead>
                         <tbody>
+                        <tr th:if="${#lists.isEmpty(allCopies)}">
+                            <td colspan="3" class="text-center text-muted">Нет экземпляров</td>
+                        </tr>
                         <tr th:each="copy : ${allCopies}">
                             <td th:text="${copy.id}">ID</td>
                             <td>
@@ -90,7 +92,6 @@
                                 </form>
                             </td>
                         </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -114,14 +115,16 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <th:block th:each="borrowing : ${borrowingList}">
-                                <td th:text="${borrowing.bookCopy.id}">ID копии</td>
-                                <td th:text="${borrowing.reader.libraryCardNum}">Номер билета</td>
-                                <td th:text="${#temporals.format(borrowing.borrowDate, 'dd.MM.yyyy')}">Дата выдачи</td>
-                                <td th:text="${borrowing.returnDate != null ?
-                          #temporals.format(borrowing.returnDate, 'dd.MM.yyyy') : '-'}">Дата возврата
-                                </td>
-                            </th:block>
+                        <tr th:if="${#lists.isEmpty(borrowingList)}">
+                            <td colspan="4" class="text-center text-muted">История выдачи пуста</td>
+                        </tr>
+                        <tr th:each="borrowing : ${borrowingList}">
+                            <td th:text="${borrowing.bookCopy.id}">ID копии</td>
+                            <td th:text="${borrowing.reader.libraryCardNum}">Номер билета</td>
+                            <td th:text="${#temporals.format(borrowing.borrowDate, 'dd.MM.yyyy')}">Дата выдачи</td>
+                            <td th:text="${borrowing.returnDate != null ?
+                              #temporals.format(borrowing.returnDate, 'dd.MM.yyyy') : '-'}">Дата возврата</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

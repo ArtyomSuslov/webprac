@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ru.msu.cmc.webprac.DAO.BookCopyDAO;
 import ru.msu.cmc.webprac.DAO.BorrowingDAO;
@@ -112,7 +113,8 @@ public class BorrowingController {
 
     @PostMapping("/return")
     public String returnBook(@RequestParam Long borrowingId,
-                             Model model) {
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
 
         Borrowing borrowing = borrowingDAO.getById(borrowingId);
 
@@ -121,6 +123,8 @@ public class BorrowingController {
             borrowing.getBookCopy().setStatus(BookStatus.available);
             bookCopyDAO.update(borrowing.getBookCopy());
             borrowingDAO.update(borrowing);
+
+            redirectAttributes.addFlashAttribute("message", "Книга с ID экземпляра " + borrowing.getId() + " была возвращена.");
         }
 
         model.addAttribute("currentPage", "return");
